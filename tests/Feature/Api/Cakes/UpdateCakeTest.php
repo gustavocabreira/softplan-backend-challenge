@@ -20,6 +20,11 @@ test('it should be able to update the cake', function () {
             'id' => $cake->id,
             ...$payload,
         ]);
+
+    $this->assertDatabaseHas($cake->getTable(), [
+        'id' => $cake->id,
+        ...$payload,
+    ]);
 });
 
 test('it should return not found when the cake does not exist', function () {
