@@ -32,4 +32,11 @@ class CakeController extends Controller
 
         return response()->json(new CakeResource($cake), Response::HTTP_OK);
     }
+
+    public function destroy(Cake $cake): JsonResponse
+    {
+        $cake->delete();
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
+    }
 }
