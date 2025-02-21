@@ -12,6 +12,13 @@ use Illuminate\Http\Response;
 
 class CakeController extends Controller
 {
+    public function index(): JsonResponse
+    {
+        $cakes = Cake::query()->paginate(10);
+
+        return CakeResource::collection($cakes)->response();
+    }
+
     public function store(CreateCakeRequest $request): JsonResponse
     {
         $validated = $request->validated();
