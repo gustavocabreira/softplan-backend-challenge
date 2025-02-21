@@ -21,3 +21,15 @@ test('it should be able to show the selected cake', function () {
             'quantity' => $cake->quantity,
         ]);
 });
+
+test('it should return not found when the cake does not exist', function () {
+    $response = $this->getJson(route('api.cakes.show', [
+        'cake' => -1,
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_NOT_FOUND)
+        ->assertJsonStructure([
+            'message',
+        ]);
+});
