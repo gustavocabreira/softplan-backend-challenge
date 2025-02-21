@@ -39,3 +39,24 @@ test('it should be able to set how many cakes per page', function () {
         ->and($response->json('meta.current_page'))->toBe(1)
         ->and($response->json('meta.total'))->toBe(5);
 });
+
+test('it should be able to change the current page', function () {
+    Cake::factory()->count(5)->create();
+
+    $response = $this->getJson(route('api.cakes.index', [
+        'per_page' => 2,
+        'page' => 2,
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_OK)
+        ->assertJsonStructure([
+            'data',
+            'links',
+        ]);
+
+    expect(count($response->json('data')))->toBe(2)
+        ->and($response->json('meta.per_page'))->toBe(2)
+        ->and($response->json('meta.current_page'))->toBe(2)
+        ->and($response->json('meta.total'))->toBe(5);
+});
