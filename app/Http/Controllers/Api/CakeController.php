@@ -8,13 +8,14 @@ use App\Http\Requests\Cake\UpdateCakeRequest;
 use App\Http\Resources\CakeResource;
 use App\Models\Cake;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CakeController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $cakes = Cake::query()->paginate(10);
+        $cakes = Cake::query()->paginate($request->input('per_page') ?? 10);
 
         return CakeResource::collection($cakes)->response();
     }
