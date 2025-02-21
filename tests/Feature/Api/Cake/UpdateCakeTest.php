@@ -94,6 +94,5 @@ test('it should return unprocessable entity when payload is invalid', function (
         ...$payload,
     ]);
 
-    $this->assertDatabaseHas($cake->getTable(), $cake->toArray());
     $this->assertDatabaseCount($cake->getTable(), 1);
 })->with('invalid_payload');

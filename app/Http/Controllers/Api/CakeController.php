@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cake\CreateCakeRequest;
+use App\Http\Requests\Cake\IndexCakeRequest;
 use App\Http\Requests\Cake\UpdateCakeRequest;
 use App\Http\Resources\CakeResource;
 use App\Models\Cake;
@@ -12,6 +13,16 @@ use Illuminate\Http\Response;
 
 class CakeController extends Controller
 {
+    public function index(IndexCakeRequest $request): JsonResponse
+    {
+        $request->validated();
+
+        $cakes = $request->input('name') ? Cake::search($request->input('name')) : Cake::query();
+        $cakes = $cakes->paginate($request->input('per_page') ?? 10);
+
+        return CakeResource::collection($cakes)->response();
+    }
+
     public function store(CreateCakeRequest $request): JsonResponse
     {
         $validated = $request->validated();

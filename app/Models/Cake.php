@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Cake extends Model
 {
     use HasFactory;
+    use Searchable;
 
     protected $table = 'cakes';
 
@@ -23,4 +25,12 @@ class Cake extends Model
         'price' => 'float',
         'quantity' => 'integer',
     ];
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'quantity' => (int) $this->quantity,
+        ];
+    }
 }
