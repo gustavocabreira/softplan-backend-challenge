@@ -20,3 +20,17 @@ test('it should be able to update the cake', function () {
             ...$payload,
         ]);
 });
+
+test('it should return not found when the cake does not exist', function () {
+    $payload = Cake::factory()->make()->toArray();
+
+    $response = $this->putJson(route('api.cakes.update', [
+        'cake' => -1,
+    ]), $payload);
+
+    $response
+        ->assertStatus(Response::HTTP_NOT_FOUND)
+        ->assertJsonStructure([
+            'message',
+        ]);
+});
