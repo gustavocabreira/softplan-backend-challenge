@@ -3,6 +3,12 @@
 use App\Models\Cake;
 use Illuminate\Http\Response;
 
+beforeEach(function () {
+    config([
+        'scout.driver' => 'database',
+    ]);
+});
+
 test('it should be able to index the cakes', function () {
     Cake::factory()->count(5)->create();
 
@@ -91,3 +97,23 @@ test('it should be able to return unprocessable entity when payload is invalid',
         ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
         ->assertJsonValidationErrors($key);
 })->with('invalid_payload');
+
+test('it can search by name', function () {
+    Cake::factory()->create(['name' => 'Banana Cake']);
+    Cake::factory()->count(5)->create();
+
+    $response = $this->getJson(route('api.cakes.index', [
+        'name' => 'Banana',
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_OK)
+        ->assertJsonStructure([
+            'data',
+            'links',
+        ]);
+
+    expect(count($response->json('data')))->toBe(1)
+        ->and($response->json('meta.current_page'))->toBe(1)
+        ->and($response->json('meta.total'))->toBe(1);
+});
