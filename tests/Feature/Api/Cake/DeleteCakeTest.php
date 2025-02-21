@@ -16,3 +16,15 @@ test('it should be able to delete a cake', function () {
         'id' => $cake->id,
     ]);
 });
+
+test('it should return not found when the cake does not exist', function () {
+    $response = $this->deleteJson(route('api.cakes.destroy', [
+        'cake' => -1,
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_NOT_FOUND)
+        ->assertJsonStructure([
+            'message',
+        ]);
+});
