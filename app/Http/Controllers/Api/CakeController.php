@@ -18,4 +18,9 @@ class CakeController extends Controller
 
         return response()->json(new CakeResource($cake), Response::HTTP_CREATED);
     }
+
+    public function show(Cake $cake): JsonResponse
+    {
+        return response()->json(new CakeResource($cake), Response::HTTP_OK);
+    }
 }
