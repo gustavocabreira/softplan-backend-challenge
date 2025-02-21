@@ -60,3 +60,34 @@ test('it should be able to change the current page', function () {
         ->and($response->json('meta.current_page'))->toBe(2)
         ->and($response->json('meta.total'))->toBe(5);
 });
+
+dataset('invalid_payload', [
+    'per_page as string' => [
+        ['per_page' => 'string'], ['per_page' => 'The per_page must be an integer.'],
+    ],
+    'per_page as float' => [
+        ['per_page' => 1.1], ['per_page' => 'The per_page must be an integer.'],
+    ],
+    'per_page as negative' => [
+        ['per_page' => -1], ['per_page' => 'The per_page must be greater than or equal to 1.'],
+    ],
+    'page as string' => [
+        ['page' => 'string'], ['page' => 'The page must be an integer.'],
+    ],
+    'page as float' => [
+        ['page' => 1.1], ['page' => 'The page must be an integer.'],
+    ],
+    'page as negative' => [
+        ['page' => -1], ['page' => 'The page must be greater than or equal to 1.'],
+    ],
+]);
+
+test('it should be able to return unprocessable entity when payload is invalid', function ($payload, $expectedErrors) {
+    $key = array_keys($expectedErrors);
+
+    $response = $this->getJson(route('api.cakes.index', $payload));
+
+    $response
+        ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+        ->assertJsonValidationErrors($key);
+})->with('invalid_payload');
