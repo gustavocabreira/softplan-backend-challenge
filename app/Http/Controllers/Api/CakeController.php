@@ -17,8 +17,13 @@ class CakeController extends Controller
     {
         $request->validated();
 
-        $cakes = $request->input('name') ? Cake::search($request->input('name')) : Cake::query();
-        $cakes = $cakes->paginate($request->input('per_page') ?? 10);
+        $cakesQuery = Cake::search($request->input('name'));
+
+        if ($request->input('order_by')) {
+            $cakesQuery->orderBy($request->input('order_by'), $request->input('direction') ?? 'asc');
+        }
+
+        $cakes = $cakesQuery->paginate($request->input('per_page') ?? 10);
 
         return CakeResource::collection($cakes)->response();
     }

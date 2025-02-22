@@ -117,3 +117,25 @@ test('it can search by name', function () {
         ->and($response->json('meta.current_page'))->toBe(1)
         ->and($response->json('meta.total'))->toBe(1);
 });
+
+test('it should be able to sort the cakes by name ascending', function () {
+    Cake::factory()->create(['name' => 'Aaaa']);
+    Cake::factory()->count(5)->create();
+
+    $response = $this->getJson(route('api.cakes.index', [
+        'order_by' => 'name',
+        'direction' => 'asc',
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_OK)
+        ->assertJsonStructure([
+            'data',
+            'links',
+        ]);
+
+    expect(count($response->json('data')))->toBe(6)
+        ->and($response->json('data.0.name'))->toBe('Aaaa')
+        ->and($response->json('meta.current_page'))->toBe(1)
+        ->and($response->json('meta.total'))->toBe(6);
+});
