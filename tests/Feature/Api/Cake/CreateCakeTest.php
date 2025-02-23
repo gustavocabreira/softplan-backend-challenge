@@ -1,7 +1,12 @@
 <?php
 
+use App\Helpers\GenerateCsvData;
+use App\Jobs\ProcessEmailJob;
 use App\Models\Cake;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
 test('it should be able to create a cake', function () {
@@ -71,3 +76,59 @@ test('it should return unprocessable entity when payload is invalid', function (
     $this->assertDatabaseMissing($model->getTable(), $payload);
     $this->assertDatabaseCount($model->getTable(), 0);
 })->with('invalid_payload');
+
+test('it should not try to import emails if quantity is 0', function () {
+    Bus::fake();
+    $model = new Cake;
+    $payload = Cake::factory()->make(['quantity' => 0])->toArray();
+
+    $response = $this->postJson(route('api.cakes.store'), $payload);
+
+    $response
+        ->assertStatus(Response::HTTP_CREATED)
+        ->assertJsonStructure($model->getFillable());
+
+    $this->assertDatabaseHas($model->getTable(), [
+        'id' => 1,
+        ...$payload,
+    ]);
+
+    $this->assertDatabaseCount($model->getTable(), 1);
+
+    Bus::assertNotDispatched(ProcessEmailJob::class);
+});
+
+test('it should not try to import emails if quantity is equals to 0', function () {
+    Bus::fake();
+
+    $model = new Cake;
+    $payload = Cake::factory()->make(['quantity' => 0])->toArray();
+
+    $response = $this->postJson(route('api.cakes.store'), $payload);
+
+    $response
+        ->assertStatus(Response::HTTP_CREATED)
+        ->assertJsonStructure($model->getFillable());
+
+    $this->assertDatabaseHas($model->getTable(), [
+        'id' => 1,
+        ...$payload,
+    ]);
+
+    $this->assertDatabaseCount($model->getTable(), 1);
+
+    Bus::assertNotDispatched(ProcessEmailJob::class);
+});
+
+test('it should process emails if quantity is greater than 0', function () {
+    Bus::fake();
+
+    $csvData = GenerateCsvData::execute(50000);
+
+    $file = UploadedFile::fake()->createWithContent('emails.csv', $csvData);
+    $cake = Cake::factory()->create(['quantity' => 10]);
+
+    (new \App\Http\Actions\ImportEmailList)->execute($file, $cake);
+
+    Queue::assertPushed(ProcessEmailJob::class);
+});

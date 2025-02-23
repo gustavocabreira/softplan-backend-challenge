@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Actions\ImportEmailList;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cake\CreateCakeRequest;
 use App\Http\Requests\Cake\IndexCakeRequest;
@@ -32,6 +33,11 @@ class CakeController extends Controller
     {
         $validated = $request->validated();
         $cake = Cake::query()->create($validated);
+
+        if ($request->hasFile('file') && $cake->quantity > 0) {
+            $file = $request->file('file');
+            (new ImportEmailList)->execute($file, $cake);
+        }
 
         return response()->json(new CakeResource($cake), Response::HTTP_CREATED);
     }

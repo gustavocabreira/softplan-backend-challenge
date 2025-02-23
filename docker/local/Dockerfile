@@ -64,6 +64,8 @@ COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY ./laravel-install.sh /usr/local/bin/laravel-install.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/laravel-install.sh
 
+COPY ./php.ini /usr/local/etc/php/conf.d/
+
 EXPOSE 9051
 USER laravel
 WORKDIR /var/www
