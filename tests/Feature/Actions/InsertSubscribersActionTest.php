@@ -12,7 +12,7 @@ test('it should insert the subscribers', function () {
 
     InsertSubscribersAction::execute($cakeId, $emails);
 
-    foreach($emails as $email) {
+    foreach ($emails as $email) {
         $this->assertDatabaseHas($subscriber->getTable(), [
             'cake_id' => $cakeId,
             'email' => $email,
