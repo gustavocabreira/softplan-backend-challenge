@@ -190,7 +190,6 @@ return [
             'maxJobs' => 0,
             'tries' => 3,
             'timeout' => 240,
-            'workers' => 1,
         ],
         'supervisor-long-running' => [
             'connection' => 'redis',
@@ -203,7 +202,6 @@ return [
             'maxJobs' => 0,
             'timeout' => 60,
             'tries' => 3,
-            'workers' => 4,
         ],
     ],
 

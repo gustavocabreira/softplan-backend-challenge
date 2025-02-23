@@ -35,7 +35,9 @@ class CakeController extends Controller
         $cake = Cake::query()->create($validated);
 
         if ($request->hasFile('file') && $cake->quantity > 0) {
-            $action->execute($request->file('file'), $cake);
+            $file = $request->file('file')->storeAs('uploads', uniqid() .'.csv');
+            $cake->emailLists()->create(['file_path' => $file, 'status' => 'pending']);
+            $cake->load('emailLists');
         }
 
         return response()->json(new CakeResource($cake), Response::HTTP_CREATED);

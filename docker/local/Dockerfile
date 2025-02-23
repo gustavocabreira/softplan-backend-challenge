@@ -57,7 +57,7 @@ RUN apk add --no-cache sudo \
     && echo 'laravel ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/laravel \
     && chmod 0440 /etc/sudoers.d/laravel
 
-RUN echo "* * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1" > /etc/crontabs/root
+#RUN echo "* * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1" > /etc/crontabs/root
 
 COPY ./supervisor.conf /etc/supervisor.conf
 COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh

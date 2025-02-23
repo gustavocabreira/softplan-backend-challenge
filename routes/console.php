@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('upload:handle')
-    ->everyMinute()
-    ->withoutOverlapping();
+Schedule::command('handle:upload');
 
-Schedule::command('subscriber:send-email')
-    ->everyMinute()
-    ->withoutOverlapping();
+Schedule::command('email:send');

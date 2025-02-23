@@ -40,8 +40,8 @@ class Cake extends Model
         return $this->hasMany(Subscriber::class);
     }
 
-    public function uploadedLists(): HasMany
+    public function emailLists(): HasMany
     {
-        return $this->hasMany(UploadedList::class);
+        return $this->hasMany(EmailList::class);
     }
 }
