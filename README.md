@@ -9,14 +9,18 @@ API desenvolvida em Laravel para enviar notificações por e-mail sobre a dispon
 
 ## Tecnologias Utilizadas
 
+- Docker e Docker Compose
 - PHP 8.4
 - Laravel Framework
 - Swoole (Laravel Octane)
 - MySQL
-- Docker e Docker Compose
+- [Nginx](https://www.nginx.com/) (Servidor de aplicações)
+- [Redis](https://redis.io/) (Cache e Filas)
 - [Pest] (https://pestphp.com/) (Testes)
-- [Scramble](https://scramble.dedoc.co/) (Documentação)
+- [Supervisor](https://github.com/ochinchina/supervisord) (Gerenciador de processos)
 - [Mailhog](https://github.com/mailhog/MailHog) (SMTP de teste) e [Jim](https://github.com/mailhog/MailHog/blob/master/docs/JIM.md) (Simulação de erros)
+- [Meilisearch](https://www.meilisearch.com/) (Full-text Search)
+- [Scramble](https://scramble.dedoc.co/) (Documentação)
 
 ## Instalação
 
@@ -24,7 +28,7 @@ API desenvolvida em Laravel para enviar notificações por e-mail sobre a dispon
 
 - [Docker](https://docs.docker.com/engine/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- Deverá ter as portas 80, 9051, 6379 e 3306 abertas e desocupadas.
+- Deverá ter as portas 80, 1025, 3306, 6379, 7700, 8025 e 9051 abertas e desocupadas.
 
 ### Executando o projeto
 
@@ -107,3 +111,12 @@ Utilizando o JIM para simular o comportamento de um servidor SMTP, conseguimos c
 Para utilizá-lo, siga os passos abaixo:
 
 1. Após a instalação do projeto, acesse http://localhost:8025
+
+## Meilisearch
+
+Meilisearch é uma plataforma de busca de texto completo que permite pesquisar em documentos de texto, imagens e outros tipos de dados.
+
+Para acessá-lo, siga os passos abaixo:
+
+1. Acesse http://localhost:7700
+2. Informe a API Key `meilisearch1234`
