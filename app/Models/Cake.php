@@ -39,4 +39,9 @@ class Cake extends Model
     {
         return $this->hasMany(Subscriber::class);
     }
+
+    public function uploadedLists(): HasMany
+    {
+        return $this->hasMany(UploadedList::class);
+    }
 }
