@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 
 test('it should be able to create a cake', function () {
     $model = new Cake;
+    $uploadedList = new UploadedList;
     $payload = Cake::factory()->make()->toArray();
 
     $response = $this->postJson(route('api.cakes.store'), $payload);
@@ -25,6 +26,7 @@ test('it should be able to create a cake', function () {
     ]);
 
     $this->assertDatabaseCount($model->getTable(), 1);
+    $this->assertDatabaseCount($uploadedList->getTable(), 0);
 });
 
 dataset('invalid_payload', [
@@ -81,6 +83,8 @@ test('it should create a pending uploaded list if quantity is greater than 0', f
     Storage::fake();
 
     $model = new Cake;
+    $uploadedList = new UploadedList;
+
     $payload = Cake::factory()->make(['quantity' => 1])->toArray();
     $payload['file'] = UploadedFile::fake()->createWithContent('emails.csv', GenerateCsvData::execute(1));
 
@@ -96,13 +100,11 @@ test('it should create a pending uploaded list if quantity is greater than 0', f
         'id' => 1,
         ...$payload,
     ]);
-
     $this->assertDatabaseCount($model->getTable(), 1);
-    $this->assertDatabaseHas(new UploadedList()->getTable(), [
+    $this->assertDatabaseHas($uploadedList->getTable(), [
         'cake_id' => $response->json('id'),
         'file_path' => $response->json('uploaded_lists.0.file_path'),
         'status' => UploadedListStatus::Pending,
     ]);
-
     $this->assertFileExists(Storage::path($response->json('uploaded_lists.0.file_path')));
 });
