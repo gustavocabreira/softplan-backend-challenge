@@ -14,8 +14,9 @@ API desenvolvida em Laravel para enviar notificações por e-mail sobre a dispon
 - Swoole (Laravel Octane)
 - MySQL
 - Docker e Docker Compose
-- Pest (Testes)
-- Scramble (Documentação)
+- [Pest] (https://pestphp.com/) (Testes)
+- [Scramble](https://scramble.dedoc.co/) (Documentação)
+- [Mailhog](https://github.com/mailhog/MailHog) (SMTP de teste) e [Jim](https://github.com/mailhog/MailHog/blob/master/docs/JIM.md) (Simulação de erros)
 
 ## Instalação
 
@@ -91,3 +92,18 @@ docker compose exec -it laravel sh
 ```bash
 php artisan test
 ```
+
+## Mailhog e Jim
+
+Mailhog é uma ferramenta de SMTP de teste que permite enviar e-mails para um servidor SMTP local.
+Jim é uma ferramenta de simulação de erros que permite simular erros de conexão, erros de autenticação e outros erros comuns em aplicações que usam o protocolo SMTP.
+
+Utilizando o JIM para simular o comportamento de um servidor SMTP, conseguimos criar cenários como:
+- Enviar e-mails com sucesso
+- Enviar e-mails com falha
+- Enviar e-mails com erros de conexão
+- Enviar e-mails com erros de autenticação
+
+Para utilizá-lo, siga os passos abaixo:
+
+1. Após a instalação do projeto, acesse http://localhost:8025
