@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Cake::class)->cascadeOnDelete();
             $table->string('email');
+            $table->enum('status', ['pending', 'processing', 'done', 'failed'])->default('pending');
             $table->datetime('notified_at')->nullable();
             $table->timestamps();
         });

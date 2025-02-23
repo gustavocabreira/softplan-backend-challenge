@@ -15,6 +15,8 @@ class Subscriber extends Model
     protected $fillable = [
         'cake_id',
         'email',
+        'notified_at',
+        'status',
     ];
 
     public function cake(): BelongsTo

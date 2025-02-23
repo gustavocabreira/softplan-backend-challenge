@@ -39,7 +39,7 @@ class SendEmailJob implements ShouldQueue
             ->first();
 
         $subscriber->notify(new CakeAvailableNotification($this->cakeName, $this->email));
-        $subscriber->update(['notified_at' => now()]);
+        $subscriber->update(['notified_at' => now(), 'status' => 'done']);
     }
 
     public function middleware(): array
@@ -63,7 +63,10 @@ class SendEmailJob implements ShouldQueue
         if ($this->shouldInspect($throwable)) {
             SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('inspect-email');
             $this->delete();
+            return;
         }
+
+        Subscriber::query()->where('cake_id', $this->cakeId)->where('email', $this->email)->delete();
     }
 
     private function shouldRetry(Throwable $throwable): bool
