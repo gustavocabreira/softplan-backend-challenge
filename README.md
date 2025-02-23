@@ -16,7 +16,7 @@ API desenvolvida em Laravel para enviar notificações por e-mail sobre a dispon
 - MySQL
 - [Nginx](https://www.nginx.com/) (Servidor de aplicações)
 - [Redis](https://redis.io/) (Cache e Filas)
-- [Pest] (https://pestphp.com/) (Testes)
+- [Pest](https://pestphp.com/) (Testes)
 - [Supervisor](https://github.com/ochinchina/supervisord) (Gerenciador de processos)
 - [Mailhog](https://github.com/mailhog/MailHog) (SMTP de teste) e [Jim](https://github.com/mailhog/MailHog/blob/master/docs/JIM.md) (Simulação de erros)
 - [Meilisearch](https://www.meilisearch.com/) (Full-text Search)
