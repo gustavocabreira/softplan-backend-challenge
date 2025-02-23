@@ -121,14 +121,16 @@ test('it should not try to import emails if quantity is equals to 0', function (
 });
 
 test('it should process emails if quantity is greater than 0', function () {
-    Bus::fake();
+    Queue::fake();
 
     $csvData = GenerateCsvData::execute(50000);
 
     $file = UploadedFile::fake()->createWithContent('emails.csv', $csvData);
-    $cake = Cake::factory()->create(['quantity' => 10]);
 
-    (new \App\Http\Actions\ImportEmailList)->execute($file, $cake);
+    $cake = Cake::factory()->make(['quantity' => 10])->toArray();
+    $cake['file'] = $file;
 
-    Queue::assertPushed(ProcessEmailJob::class);
+    $this->postJson(route('api.cakes.store'), $cake);
+
+    Queue::assertPushed(ProcessEmailJob::class, 101);
 });
