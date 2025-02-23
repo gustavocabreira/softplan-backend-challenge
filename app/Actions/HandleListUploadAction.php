@@ -3,7 +3,7 @@
 namespace App\Actions;
 
 use App\Jobs\ProcessEmailJob;
-use App\Jobs\SendEmailJob;
+use App\Jobs\SendBatchedEmailJob;
 use App\Models\Cake;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -14,11 +14,12 @@ class HandleListUploadAction
     public function execute(UploadedFile $file, Cake $cake): void
     {
         $emails = $this->getEmails($file);
-        $chunks = $emails->chunk(500)->map(fn ($chunk) => new ProcessEmailJob($cake->id, $chunk->toArray()));
+
+        $chunks = $emails->chunk(10000)->map(fn ($chunk) => new ProcessEmailJob($cake->id, $chunk->toArray()));
 
         Bus::batch($chunks)
             ->name('import-emails')
-            ->then(fn () => $this->dispatchEmails($cake))
+            ->then(fn () => $this->dispatchEmails($cake, $emails))
             ->dispatch();
     }
 
@@ -31,11 +32,8 @@ class HandleListUploadAction
         return $emails->map(fn ($email) => trim($email));
     }
 
-    private function dispatchEmails(Cake $cake): void
+    private function dispatchEmails(Cake $cake, Collection $emails): void
     {
-        $cake->subscribers()
-            ->groupBy('email')
-            ->get()
-            ->each(fn ($subscriber) => SendEmailJob::dispatch($cake->id, $cake->name, $subscriber->email)->onQueue('email'));
+        $emails->chunk(10000)->map(fn ($chunk) => SendBatchedEmailJob::dispatch($cake->id, $cake->name, $chunk->toArray())->onQueue('email'));
     }
 }
