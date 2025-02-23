@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\HandleListUploadAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cake\CreateCakeRequest;
 use App\Http\Requests\Cake\IndexCakeRequest;
@@ -28,18 +29,13 @@ class CakeController extends Controller
         return CakeResource::collection($cakes)->response();
     }
 
-    public function store(CreateCakeRequest $request): JsonResponse
+    public function store(CreateCakeRequest $request, HandleListUploadAction $action): JsonResponse
     {
         $validated = $request->validated();
         $cake = Cake::query()->create($validated);
 
         if ($request->hasFile('file') && $cake->quantity > 0) {
-            $filePath = $request->file('file')->store('email_lists');
-            $cake->uploadedLists()->create([
-                'file_path' => $filePath,
-                'status' => 'pending',
-            ]);
-            $cake->load('uploadedLists');
+            $action->execute($request->file('file'), $cake);
         }
 
         return response()->json(new CakeResource($cake), Response::HTTP_CREATED);

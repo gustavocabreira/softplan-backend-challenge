@@ -54,7 +54,7 @@ class SendEmailJob implements ShouldQueue
     public function failed(?Throwable $throwable): void
     {
         if ($this->shouldRetry($throwable)) {
-            SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email');
+            SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email')->delay(60);
             $this->delete();
 
             return;
@@ -63,19 +63,28 @@ class SendEmailJob implements ShouldQueue
         if ($this->shouldInspect($throwable)) {
             SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('inspect-email');
             $this->delete();
+
             return;
         }
 
-        Subscriber::query()->where('cake_id', $this->cakeId)->where('email', $this->email)->delete();
+        if ($this->isTooManyRequests($throwable)) {
+            SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email')->delay(60);
+        }
     }
 
     private function shouldRetry(Throwable $throwable): bool
     {
-        return str_contains($throwable->getMessage(), 'has been closed unexpectedly');
+        return str_contains($throwable->getMessage(), 'has been closed unexpectedly')
+            || str_contains($throwable->getMessage(), 'timed out');
     }
 
     private function shouldInspect(Throwable $throwable): bool
     {
         return str_contains($throwable->getMessage(), 'got empty code');
+    }
+
+    private function isTooManyRequests(Throwable $throwable): bool
+    {
+        return str_contains($throwable->getMessage(), 'Too Many Requests');
     }
 }
