@@ -17,7 +17,7 @@ class CakeResource extends JsonResource
             'quantity' => $this->quantity,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'uploaded_lists' => EmailListResource::collection($this->whenLoaded('emailLists')),
+            'email_lists' => EmailListResource::collection($this->whenLoaded('emailLists')),
         ];
     }
 }

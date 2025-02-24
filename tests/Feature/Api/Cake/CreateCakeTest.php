@@ -87,7 +87,16 @@ test('it should be able to create a cake with file', function () {
 
     $response
         ->assertStatus(Response::HTTP_CREATED)
-        ->assertJsonStructure($model->getFillable());
+        ->assertJsonStructure([
+            ...$model->getFillable(),
+            'email_lists' => [
+                '*' => [
+                    'id',
+                    'file_path',
+                    'status',
+                ],
+            ]
+        ]);
 
     unset($payload['file']);
     $this->assertDatabaseHas($model->getTable(), [
