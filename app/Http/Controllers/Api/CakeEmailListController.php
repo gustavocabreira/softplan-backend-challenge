@@ -12,6 +12,9 @@ use Illuminate\Validation\Rule;
 
 class CakeEmailListController extends Controller
 {
+    /**
+     * Display a listing of the email lists.
+     */
     public function index(Cake $cake, Request $request): JsonResponse
     {
         $request->validate([

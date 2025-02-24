@@ -13,6 +13,9 @@ use Illuminate\Http\Response;
 
 class CakeSubscriberController extends Controller
 {
+    /**
+     * Display a listing of the cake's subscribers.
+     */
     public function index(Cake $cake, IndexSubscriberRequest $request): JsonResponse
     {
         $request->validated();
@@ -35,6 +38,9 @@ class CakeSubscriberController extends Controller
         return SubscriberResource::collection($subscribers)->response();
     }
 
+    /**
+     * Store a new subscriber for the cake.
+     */
     public function store(Cake $cake, StoreSubscriberRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -49,6 +55,9 @@ class CakeSubscriberController extends Controller
         return response()->json(new SubscriberResource($subscriber), Response::HTTP_CREATED);
     }
 
+    /**
+     * Unsubscribe from the cake.
+     */
     public function destroy(Cake $cake, Subscriber $subscriber): JsonResponse
     {
         $subscriber->delete();
