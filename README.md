@@ -20,6 +20,8 @@ O processamento foi considerado da seguinte forma:
 3. Quando um job falhar por causa de um erro de recebedor inválido, ele é removido da fila após 3 tentativas.
 4. Quando um job falhar por 'empty code', ele é inserido em uma DLQ (inspect-email) para ser analisado posteriormente e é removido da fila atual.
 
+Também foi implementado a funcionalidade de uma pessoa poder se inscrever e desinscrever de um bolo, sem a necessidade de ser inserido por meio de uma lista.
+
 ## Tecnologias Utilizadas
 
 - Docker e Docker Compose
