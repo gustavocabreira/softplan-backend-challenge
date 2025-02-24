@@ -14,6 +14,9 @@ use Illuminate\Http\Response;
 
 class CakeController extends Controller
 {
+    /**
+     * Display a listing of the cakes.
+     */
     public function index(IndexCakeRequest $request): JsonResponse
     {
         $request->validated();
@@ -29,6 +32,9 @@ class CakeController extends Controller
         return CakeResource::collection($cakes)->response();
     }
 
+    /**
+     * Store a new cake
+     */
     public function store(CreateCakeRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -43,11 +49,17 @@ class CakeController extends Controller
         return response()->json(new CakeResource($cake), Response::HTTP_CREATED);
     }
 
+    /**
+     * Display the specified cake.
+     */
     public function show(Cake $cake): JsonResponse
     {
         return response()->json(new CakeResource($cake), Response::HTTP_OK);
     }
 
+    /**
+     * Update the specified cake.
+     */
     public function update(Cake $cake, UpdateCakeRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -62,6 +74,9 @@ class CakeController extends Controller
         return response()->json(new CakeResource($cake), Response::HTTP_OK);
     }
 
+    /**
+     * Remove the specified cake.
+     */
     public function destroy(Cake $cake): JsonResponse
     {
         $cake->delete();
