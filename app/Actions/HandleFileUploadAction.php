@@ -22,7 +22,10 @@ class HandleFileUploadAction
             ->name('import-emails')
             ->then(function () use ($cakeName, $listId) {
                 Mail::to('user@example.com')->send(new SubscribersImportedSuccessfullyMail($cakeName));
-                EmailList::query()->find($listId)->update(['status' => 'done']);
+
+                EmailList::query()
+                    ->find($listId)
+                    ->update(['status' => 'done']);
             })
             ->dispatch();
     }

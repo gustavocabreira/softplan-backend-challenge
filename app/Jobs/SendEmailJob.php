@@ -32,7 +32,11 @@ class SendEmailJob implements ShouldQueue
 
     public function handle(): void
     {
-        (new SendEmailAction)->execute($this->cakeId, $this->cakeName, $this->email);
+        (new SendEmailAction)->execute(
+            cakeId: $this->cakeId,
+            cakeName: $this->cakeName,
+            email: $this->email
+        );
     }
 
     public function middleware(): array
@@ -47,21 +51,21 @@ class SendEmailJob implements ShouldQueue
     public function failed(?Throwable $throwable): void
     {
         if ($this->shouldRetry($throwable)) {
-            SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email')->delay(60);
+            SendEmailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email')->delay(60);
             $this->delete();
 
             return;
         }
 
         if ($this->shouldInspect($throwable)) {
-            SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('inspect-email');
+            SendEmailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('inspect-email');
             $this->delete();
 
             return;
         }
 
         if ($this->isTooManyRequests($throwable)) {
-            SendemailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email')->delay(60);
+            SendEmailJob::dispatch($this->cakeId, $this->cakeName, $this->email)->onQueue('email')->delay(60);
         }
     }
 

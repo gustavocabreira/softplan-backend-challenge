@@ -31,7 +31,11 @@ class SendEmailToSubscribersCommand extends Command
         $subscribersQuery->update(['status' => 'processing']);
 
         $jobs = $subscribers->map(function ($subscriber) {
-            return new SendEmailJob($subscriber->cake->id, $subscriber->cake->name, $subscriber->email);
+            return new SendEmailJob(
+                cakeId: $subscriber->cake->id,
+                cakeName: $subscriber->cake->name,
+                email: $subscriber->email
+            );
         });
 
         Bus::batch($jobs)

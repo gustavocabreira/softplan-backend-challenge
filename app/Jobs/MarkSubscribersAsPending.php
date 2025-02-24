@@ -14,6 +14,8 @@ class MarkSubscribersAsPending implements ShouldQueue
 
     public function handle(): void
     {
-        (new MarkSubscriberAsPendingAction)->execute($this->cakeId);
+        (new MarkSubscriberAsPendingAction)->execute(
+            cakeId: $this->cakeId
+        );
     }
 }

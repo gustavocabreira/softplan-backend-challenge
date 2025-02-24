@@ -10,7 +10,7 @@ test('it should insert the subscribers', function () {
 
     $emails = ['email1@example.com', 'email2@example.com', 'email3@example.com'];
 
-    InsertSubscribersAction::execute($cakeId, $emails);
+    (new InsertSubscribersAction)->execute($cakeId, $emails);
 
     foreach ($emails as $email) {
         $this->assertDatabaseHas($subscriber->getTable(), [
