@@ -11,7 +11,7 @@ class SendEmailToSubscribersCommand extends Command
 {
     protected $signature = 'email:send';
 
-    protected $description = 'Command description';
+    protected $description = 'It sends emails to subscribers';
 
     public function handle(): void
     {
@@ -23,6 +23,10 @@ class SendEmailToSubscribersCommand extends Command
             ->limit(5000);
 
         $subscribers = $subscribersQuery->get();
+
+        if ($subscribers->isEmpty()) {
+            return;
+        }
 
         $subscribersQuery->update(['status' => 'processing']);
 
