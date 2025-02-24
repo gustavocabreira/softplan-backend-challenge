@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cake\Subscriber\IndexSubscriberRequest;
+use App\Http\Requests\Cake\Subscriber\StoreSubscriberRequest;
 use App\Http\Resources\SubscriberResource;
 use App\Models\Cake;
+use App\Models\Subscriber;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CakeSubscriberController extends Controller
 {
@@ -30,5 +33,26 @@ class CakeSubscriberController extends Controller
         $subscribers = $subscribers->paginate($perPage);
 
         return SubscriberResource::collection($subscribers)->response();
+    }
+
+    public function store(Cake $cake, StoreSubscriberRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $subscriber = $cake->subscribers()->create([
+            'email' => $validated['email'],
+            'status' => 'pending',
+        ]);
+
+        $subscriber->load('cake');
+
+        return response()->json(new SubscriberResource($subscriber), Response::HTTP_CREATED);
+    }
+
+    public function destroy(Cake $cake, Subscriber $subscriber): JsonResponse
+    {
+        $subscriber->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
