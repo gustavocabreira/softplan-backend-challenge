@@ -11,6 +11,7 @@ class EmailListResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'cake_id' => $this->cake_id,
             'file_path' => $this->file_path,
             'status' => $this->status,
         ];
