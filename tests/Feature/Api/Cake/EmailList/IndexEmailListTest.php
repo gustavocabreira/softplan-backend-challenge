@@ -68,3 +68,15 @@ test('it should be able to change the current page', function () {
         ->and($response->json('meta.current_page'))->toBe(2)
         ->and($response->json('meta.total'))->toBe(5);
 });
+
+test('it should return not found when trying to list email lists of a cake that does not exist', function () {
+    $response = $this->getJson(route('api.cakes.email-lists.index', [
+        'cake' => -1,
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_NOT_FOUND)
+        ->assertJsonStructure([
+            'message',
+        ]);
+});
