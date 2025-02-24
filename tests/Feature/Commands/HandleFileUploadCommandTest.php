@@ -33,3 +33,17 @@ test('it should not dispatch a job when file is already being processed', functi
 
     Queue::assertNotPushed(HandleFileUploadJob::class);
 });
+
+test('it should not dispatch a job when file is already done', function () {
+    Queue::fake();
+    $cake = Cake::factory()->create();
+    $file = UploadedFile::fake()->createWithContent('emails.csv', GenerateCsvData::execute(10));
+    $path = $file->storeAs('uploads', uniqid().'.csv');
+    $emailList = $cake->emailLists()->create(['status' => 'done', 'file_path' => $path]);
+
+    $this->artisan('handle:upload');
+
+    expect($emailList->refresh()->status)->toBe('done');
+
+    Queue::assertNotPushed(HandleFileUploadJob::class);
+});
