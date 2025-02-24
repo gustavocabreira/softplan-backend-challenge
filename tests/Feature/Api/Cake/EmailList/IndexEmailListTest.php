@@ -80,3 +80,38 @@ test('it should return not found when trying to list email lists of a cake that 
             'message',
         ]);
 });
+
+dataset('invalid_payload', [
+    'per_page as string' => [
+        ['per_page' => 'string'], ['per_page' => 'The per_page must be an integer.'],
+    ],
+    'per_page as float' => [
+        ['per_page' => 1.1], ['per_page' => 'The per_page must be an integer.'],
+    ],
+    'per_page as negative' => [
+        ['per_page' => -1], ['per_page' => 'The per_page must be greater than or equal to 1.'],
+    ],
+    'page as string' => [
+        ['page' => 'string'], ['page' => 'The page must be an integer.'],
+    ],
+    'page as float' => [
+        ['page' => 1.1], ['page' => 'The page must be an integer.'],
+    ],
+    'page as negative' => [
+        ['page' => -1], ['page' => 'The page must be greater than or equal to 1.'],
+    ],
+]);
+
+test('it should be able to return unprocessable entity when payload is invalid', function ($payload, $expectedErrors) {
+    $cake = Cake::factory()->create();
+    $key = array_keys($expectedErrors);
+
+    $response = $this->getJson(route('api.cakes.email-lists.index', [
+        'cake' => $cake->id,
+        ...$payload,
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+        ->assertJsonValidationErrors($key);
+})->with('invalid_payload');
