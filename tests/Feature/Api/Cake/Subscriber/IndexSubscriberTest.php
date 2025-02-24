@@ -103,3 +103,25 @@ test('it should be able to return unprocessable entity when payload is invalid',
         ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
         ->assertJsonValidationErrors($key);
 })->with('invalid_payload');
+
+test('it can search by email', function () {
+    $cake = Cake::factory()->create();
+    Subscriber::factory()->count(5)->create(['cake_id' => $cake->id]);
+    Subscriber::factory()->create(['cake_id' => $cake->id, 'email' => 'user@example.com']);
+
+    $response = $this->getJson(route('api.cakes.subscribers.index', [
+        'cake' => $cake->id,
+        'email' => 'user@example.com',
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_OK)
+        ->assertJsonStructure([
+            'data',
+            'links',
+        ]);
+
+    expect(count($response->json('data')))->toBe(1)
+        ->and($response->json('meta.current_page'))->toBe(1)
+        ->and($response->json('meta.total'))->toBe(1);
+});

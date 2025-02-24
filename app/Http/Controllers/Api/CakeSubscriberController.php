@@ -24,8 +24,8 @@ class CakeSubscriberController extends Controller
 
         $subscribers = $cake->subscribers();
 
-        if ($request->has('name')) {
-            $subscribers->where('name', 'like', '%'.$request->input('name').'%');
+        if ($request->has('email')) {
+            $subscribers->where('email', 'like', '%'.$request->input('email').'%');
         }
 
         if ($request->has('order_by')) {
