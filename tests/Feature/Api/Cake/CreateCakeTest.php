@@ -1,7 +1,9 @@
 <?php
 
+use App\Helpers\GenerateCsvData;
 use App\Models\Cake;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 test('it should be able to create a cake without file', function () {
@@ -72,3 +74,27 @@ test('it should return unprocessable entity when payload is invalid', function (
     $this->assertDatabaseMissing($model->getTable(), $payload);
     $this->assertDatabaseCount($model->getTable(), 0);
 })->with('invalid_payload');
+
+test('it should be able to create a cake with file', function () {
+    $model = new Cake;
+    $payload = Cake::factory()->make()->toArray();
+
+    $csvData = GenerateCsvData::execute(50000);
+    $file = UploadedFile::fake()->createWithContent('emails.csv', $csvData);
+    $payload['file'] = $file;
+
+    $response = $this->postJson(route('api.cakes.store'), $payload);
+
+    $response
+        ->assertStatus(Response::HTTP_CREATED)
+        ->assertJsonStructure($model->getFillable());
+
+    unset($payload['file']);
+    $this->assertDatabaseHas($model->getTable(), [
+        'id' => 1,
+        ...$payload,
+    ]);
+
+    $this->assertDatabaseCount($model->getTable(), 1);
+    $this->assertDatabaseCount('email_lists', 1);
+});
