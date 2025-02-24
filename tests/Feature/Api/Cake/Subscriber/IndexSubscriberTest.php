@@ -125,3 +125,15 @@ test('it can search by email', function () {
         ->and($response->json('meta.current_page'))->toBe(1)
         ->and($response->json('meta.total'))->toBe(1);
 });
+
+test('it should return not found when trying to list subscribers of a cake that does not exist', function () {
+    $response = $this->getJson(route('api.cakes.subscribers.index', [
+        'cake' => -1,
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_NOT_FOUND)
+        ->assertJsonStructure([
+            'message',
+        ]);
+});
