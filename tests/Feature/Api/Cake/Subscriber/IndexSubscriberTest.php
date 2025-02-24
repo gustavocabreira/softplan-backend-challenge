@@ -138,7 +138,7 @@ test('it should return not found when trying to list subscribers of a cake that 
         ]);
 });
 
-test('it should be able to sort the subscribers by name ascending', function () {
+test('it should be able to sort the subscribers by email ascending', function () {
     $cake = Cake::factory()->create();
     Subscriber::factory()->count(5)->create(['cake_id' => $cake->id]);
     Subscriber::factory()->create(['cake_id' => $cake->id, 'email' => 'aaa@example.com']);
@@ -158,6 +158,30 @@ test('it should be able to sort the subscribers by name ascending', function () 
 
     expect(count($response->json('data')))->toBe(6)
         ->and($response->json('data.0.email'))->toBe('aaa@example.com')
+        ->and($response->json('meta.current_page'))->toBe(1)
+        ->and($response->json('meta.total'))->toBe(6);
+});
+
+test('it should be able to sort the subscribers by email descending', function () {
+    $cake = Cake::factory()->create();
+    Subscriber::factory()->count(5)->create(['cake_id' => $cake->id]);
+    Subscriber::factory()->create(['cake_id' => $cake->id, 'email' => 'zzz@example.com']);
+
+    $response = $this->getJson(route('api.cakes.subscribers.index', [
+        'cake' => $cake->id,
+        'order_by' => 'email',
+        'direction' => 'desc',
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_OK)
+        ->assertJsonStructure([
+            'data',
+            'links',
+        ]);
+
+    expect(count($response->json('data')))->toBe(6)
+        ->and($response->json('data.0.email'))->toBe('zzz@example.com')
         ->and($response->json('meta.current_page'))->toBe(1)
         ->and($response->json('meta.total'))->toBe(6);
 });
