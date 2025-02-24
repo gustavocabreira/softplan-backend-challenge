@@ -2,8 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Subscriber;
-use App\Notifications\CakeAvailableNotification;
+use App\Actions\SendEmailAction;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -33,20 +32,7 @@ class SendEmailJob implements ShouldQueue
 
     public function handle(): void
     {
-        $subscriber = Subscriber::query()
-            ->where('cake_id', $this->cakeId)
-            ->where('email', $this->email)
-            ->first();
-
-        if ($subscriber->cake->quantity == 0) {
-            $subscriber->update(['notified_at' => now(), 'status' => 'done']);
-
-            return;
-        }
-
-        $subscriber->notify(new CakeAvailableNotification($this->cakeName, $this->email));
-        $subscriber->update(['notified_at' => now(), 'status' => 'done']);
-
+        (new SendEmailAction)->execute($this->cakeId, $this->cakeName, $this->email);
     }
 
     public function middleware(): array
