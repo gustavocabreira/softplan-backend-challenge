@@ -115,3 +115,29 @@ test('it should be able to return unprocessable entity when payload is invalid',
         ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
         ->assertJsonValidationErrors($key);
 })->with('invalid_payload');
+
+test('it should be able to sort the email lists by status ascending', function () {
+    $cake = Cake::factory()->create();
+
+    EmailList::factory()->create(['cake_id' => $cake->id, 'status' => 'done']);
+    EmailList::factory()->create(['cake_id' => $cake->id, 'status' => 'pending']);
+    EmailList::factory()->create(['cake_id' => $cake->id, 'status' => 'processing']);
+
+    $response = $this->getJson(route('api.cakes.email-lists.index', [
+        'cake' => $cake->id,
+        'order_by' => 'status',
+        'direction' => 'asc',
+    ]));
+
+    $response
+        ->assertStatus(Response::HTTP_OK)
+        ->assertJsonStructure([
+            'data',
+            'links',
+        ]);
+
+    expect(count($response->json('data')))->toBe(3)
+        ->and($response->json('data.0.status'))->toBe('done')
+        ->and($response->json('meta.current_page'))->toBe(1)
+        ->and($response->json('meta.total'))->toBe(3);
+});
