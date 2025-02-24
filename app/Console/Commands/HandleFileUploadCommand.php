@@ -20,7 +20,13 @@ class HandleFileUploadCommand extends Command
             ->get()
             ->each(function (EmailList $list) {
                 $list->update(['status' => 'processing']);
-                HandleFileUploadJob::dispatch($list->cake->id, $list->cake->name, $list->id, $list->file_path);
+                $job = new HandleFileUploadJob(
+                    cakeId: $list->cake->id,
+                    cakeName: $list->cake->name,
+                    listId: $list->id,
+                    filePath: $list->file_path
+                );
+                dispatch($job);
             });
     }
 }

@@ -15,6 +15,9 @@ class ProcessEmailJob implements ShouldQueue
 
     public function handle(): void
     {
-        InsertSubscribersAction::execute($this->cakeId, $this->emails);
+        (new InsertSubscribersAction)->execute(
+            cakeId: $this->cakeId,
+            emails: $this->emails
+        );
     }
 }

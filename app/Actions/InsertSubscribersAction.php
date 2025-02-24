@@ -6,7 +6,7 @@ use App\Models\Subscriber;
 
 class InsertSubscribersAction
 {
-    public static function execute(int $cakeId, array $emails): void
+    public function execute(int $cakeId, array $emails): void
     {
         $subscribers = Subscriber::query()
             ->where('cake_id', $cakeId)

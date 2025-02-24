@@ -13,6 +13,13 @@ Caso o estoque do bolo seja esgotado e um novo estoque seja adicionado, o sistem
 
 Todo o processamento de e-mails e notificações é feito de forma assíncrona, aproveitando as filas do Laravel para garantir eficiência e desempenho na execução dessas tarefas.
 
+O processamento foi considerado da seguinte forma:
+
+1. Quando um job falhar por causa de um erro de conexão, ele é enviado novamente para a fila com 60 segundos de espera.
+2. Quando um job falhar por causa de um erro de autenticação, ele é removido da fila após 3 tentativas.
+3. Quando um job falhar por causa de um erro de recebedor inválido, ele é removido da fila após 3 tentativas.
+4. Quando um job falhar por 'empty code', ele é inserido em uma DLQ (inspect-email) para ser analisado posteriormente e é removido da fila atual.
+
 ## Tecnologias Utilizadas
 
 - Docker e Docker Compose
