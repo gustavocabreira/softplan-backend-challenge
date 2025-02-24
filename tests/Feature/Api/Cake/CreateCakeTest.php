@@ -95,7 +95,7 @@ test('it should be able to create a cake with file', function () {
                     'file_path',
                     'status',
                 ],
-            ]
+            ],
         ]);
 
     unset($payload['file']);

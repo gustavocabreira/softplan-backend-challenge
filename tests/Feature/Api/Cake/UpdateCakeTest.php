@@ -1,7 +1,9 @@
 <?php
 
+use App\Jobs\MarkSubscribersAsPending;
 use App\Models\Cake;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
 test('it should be able to update the cake', function () {
@@ -96,3 +98,16 @@ test('it should return unprocessable entity when payload is invalid', function (
 
     $this->assertDatabaseCount($cake->getTable(), 1);
 })->with('invalid_payload');
+
+test('it should dispatch a job when cake is available', function () {
+    Queue::fake();
+    $cake = Cake::factory()->create(['quantity' => 0]);
+
+    $payload = Cake::factory()->make(['quantity' => 1])->toArray();
+
+    $this->putJson(route('api.cakes.update', [
+        'cake' => $cake->id,
+    ]), $payload);
+
+    Queue::assertPushed(MarkSubscribersAsPending::class);
+});
