@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Cake\Subscriber\IndexSubscriberRequest;
 use App\Http\Resources\SubscriberResource;
 use App\Models\Cake;
+use App\Models\Subscriber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -57,5 +58,12 @@ class CakeSubscriberController extends Controller
         $subscriber->load('cake');
 
         return response()->json(new SubscriberResource($subscriber), Response::HTTP_CREATED);
+    }
+
+    public function destroy(Cake $cake, Subscriber $subscriber): JsonResponse
+    {
+        $subscriber->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
