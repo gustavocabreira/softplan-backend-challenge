@@ -3,26 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Cake\EmailList\IndexEmailListRequest;
 use App\Http\Resources\EmailListResource;
 use App\Models\Cake;
-use App\Models\EmailList;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CakeEmailListController extends Controller
 {
     /**
      * Display a listing of the email lists.
      */
-    public function index(Cake $cake, Request $request): JsonResponse
+    public function index(Cake $cake, IndexEmailListRequest $request): JsonResponse
     {
-        $request->validate([
-            'order_by' => ['sometimes', 'string', Rule::in((new EmailList)->getFillable())],
-            'direction' => ['sometimes', 'string', Rule::in(['asc', 'desc'])],
-            'page' => ['sometimes', 'integer', 'min:1'],
-            'per_page' => ['sometimes', 'integer', 'min:1'],
-        ]);
+        $request->validated();
 
         $emailLists = $cake->emailLists();
 
