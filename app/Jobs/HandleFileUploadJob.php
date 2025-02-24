@@ -19,7 +19,7 @@ class HandleFileUploadJob implements ShouldQueue
         private string $cakeName,
         private int $listId,
         private string $filePath
-    ) { }
+    ) {}
 
     public function handle(): void
     {
@@ -37,7 +37,7 @@ class HandleFileUploadJob implements ShouldQueue
 
         Bus::batch($chunks)
             ->name('import-emails')
-            ->then(function () use ($emails, $cakeName, $listId) {
+            ->then(function () use ($cakeName, $listId) {
                 Mail::to('user@example.com')->send(new SubscribersImportedSuccessfullyMail($cakeName));
                 EmailList::query()->find($listId)->update(['status' => 'done']);
             })

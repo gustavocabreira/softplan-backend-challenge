@@ -38,8 +38,15 @@ class SendEmailJob implements ShouldQueue
             ->where('email', $this->email)
             ->first();
 
+        if ($subscriber->cake->quantity == 0) {
+            $subscriber->update(['notified_at' => now(), 'status' => 'done']);
+
+            return;
+        }
+
         $subscriber->notify(new CakeAvailableNotification($this->cakeName, $this->email));
         $subscriber->update(['notified_at' => now(), 'status' => 'done']);
+
     }
 
     public function middleware(): array

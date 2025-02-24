@@ -34,7 +34,7 @@ class CakeAvailableNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject($this->cake . ' - Cake Available')
+            ->subject($this->cake.' - Cake Available')
             ->line('The cake is available!')
             ->line('Cake: '.$this->cake)
             ->line('Email: '.$this->email)

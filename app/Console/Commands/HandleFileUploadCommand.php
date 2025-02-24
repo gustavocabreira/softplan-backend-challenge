@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Jobs\HandleFileUploadJob;
 use App\Models\EmailList;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class HandleFileUploadCommand extends Command
 {
