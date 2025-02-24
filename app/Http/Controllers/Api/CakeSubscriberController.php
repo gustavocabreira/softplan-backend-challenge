@@ -7,6 +7,9 @@ use App\Http\Requests\Cake\Subscriber\IndexSubscriberRequest;
 use App\Http\Resources\SubscriberResource;
 use App\Models\Cake;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class CakeSubscriberController extends Controller
 {
@@ -30,5 +33,29 @@ class CakeSubscriberController extends Controller
         $subscribers = $subscribers->paginate($perPage);
 
         return SubscriberResource::collection($subscribers)->response();
+    }
+
+    public function store(Cake $cake, Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('subscribers')->where(function ($query) use ($cake) {
+                    return $query->where('cake_id', $cake->id);
+                }),
+            ],
+        ], [
+            'email.unique' => 'This email is already subscribed to this cake.',
+        ]);
+
+        $subscriber = $cake->subscribers()->create([
+            'email' => $validated['email'],
+            'status' => 'pending',
+        ]);
+
+        $subscriber->load('cake');
+
+        return response()->json(new SubscriberResource($subscriber), Response::HTTP_CREATED);
     }
 }
