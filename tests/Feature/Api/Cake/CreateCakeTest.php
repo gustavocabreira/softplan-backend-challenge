@@ -4,7 +4,7 @@ use App\Models\Cake;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
-test('it should be able to create a cake', function () {
+test('it should be able to create a cake without file', function () {
     $model = new Cake;
     $payload = Cake::factory()->make()->toArray();
 
@@ -20,6 +20,7 @@ test('it should be able to create a cake', function () {
     ]);
 
     $this->assertDatabaseCount($model->getTable(), 1);
+    $this->assertDatabaseCount('email_lists', 0);
 });
 
 dataset('invalid_payload', [
