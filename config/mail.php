@@ -113,4 +113,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'rate_limiting_delay' => env('MAIL_RATE_LIMITING_DELAY', 10),
+
 ];

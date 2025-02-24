@@ -18,6 +18,7 @@ class CreateCakeRequest extends FormRequest
             'weight' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'numeric', 'min:0.0'],
             'quantity' => ['required', 'integer', 'min:0'],
+            'file' => ['sometimes', 'file', 'max:10000'],
         ];
     }
 }

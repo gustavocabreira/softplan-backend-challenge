@@ -7,6 +7,7 @@ use App\Http\Requests\Cake\CreateCakeRequest;
 use App\Http\Requests\Cake\IndexCakeRequest;
 use App\Http\Requests\Cake\UpdateCakeRequest;
 use App\Http\Resources\CakeResource;
+use App\Jobs\MarkSubscribersAsPending;
 use App\Models\Cake;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -33,6 +34,12 @@ class CakeController extends Controller
         $validated = $request->validated();
         $cake = Cake::query()->create($validated);
 
+        if ($request->hasFile('file')) {
+            $file = $request->file('file')->storeAs('uploads', uniqid().'.csv');
+            $cake->emailLists()->create(['file_path' => $file, 'status' => 'pending']);
+            $cake->load('emailLists');
+        }
+
         return response()->json(new CakeResource($cake), Response::HTTP_CREATED);
     }
 
@@ -44,7 +51,13 @@ class CakeController extends Controller
     public function update(Cake $cake, UpdateCakeRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $cakeIsAvailable = $cake->quantity == 0 && $request->input('quantity') > 0;
+
         $cake->update($validated);
+
+        if ($cakeIsAvailable) {
+            MarkSubscribersAsPending::dispatch($cake->id);
+        }
 
         return response()->json(new CakeResource($cake), Response::HTTP_OK);
     }
