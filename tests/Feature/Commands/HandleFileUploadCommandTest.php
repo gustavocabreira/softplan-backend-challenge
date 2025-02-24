@@ -47,3 +47,11 @@ test('it should not dispatch a job when file is already done', function () {
 
     Queue::assertNotPushed(HandleFileUploadJob::class);
 });
+
+test('it should not dispatch a job when file does not exist', function () {
+    Queue::fake();
+
+    $this->artisan('handle:upload');
+
+    Queue::assertNotPushed(HandleFileUploadJob::class);
+});
