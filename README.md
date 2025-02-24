@@ -7,6 +7,12 @@
 
 API desenvolvida em Laravel para enviar notificações por e-mail sobre a disponibilidade de novos bolos, mantendo os usuários informados em tempo real.
 
+Quando um usuário cadastrar um bolo com uma lista de e-mails, o sistema processa essa lista em segundo plano utilizando as filas do Laravel. Primeiramente, os e-mails são armazenados no banco de dados, e em seguida, é enviado um e-mail ao usuário notificando que o bolo está disponível para ser adquirido.
+
+Caso o estoque do bolo seja esgotado e um novo estoque seja adicionado, o sistema envia outro e-mail para o usuário informando que o bolo voltou a estar disponível.
+
+Todo o processamento de e-mails e notificações é feito de forma assíncrona, aproveitando as filas do Laravel para garantir eficiência e desempenho na execução dessas tarefas.
+
 ## Tecnologias Utilizadas
 
 - Docker e Docker Compose
